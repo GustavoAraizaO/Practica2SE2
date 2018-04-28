@@ -65,25 +65,25 @@ tcpecho_thread(void *arg)
 			while ((err = netconn_recv(newconn, &buf)) == ERR_OK) {
 
 				do {
-					               // <------- ??
+					// <------- ??
 					netbuf_data(buf, (void *)&data, &len);
 					auxdata = *data;
 					//PRINTF("%s", data);
-//////////////////////////////////////////////////////////////////////////////////////////////
+					//////////////////////////////////////////////////////////////////////////////////////////////
 					if(pdFALSE == Selection_Flag)
 					{
 
-						if ( '0' == auxdata )
+						if ( ESC == auxdata )
 						{
 							data = "Choose an option: 1)PlayStop. 2)selection. 3)statistics.";
 							len = 56;
 							err = netconn_write(newconn, data, len, NETCONN_COPY);
 						}
-						else if ( '1' == auxdata )
+						else if ( UNO == auxdata )
 						{
 							//tcp_playStop();
 						}
-						else if ( '2' == auxdata )
+						else if ( DOS == auxdata )
 						{
 							//tcp_Selection();
 							data = "Choose a song: 1)option1. 2)option2. 3)option3.";
@@ -91,14 +91,21 @@ tcpecho_thread(void *arg)
 							err = netconn_write(newconn, data, len, NETCONN_COPY);
 							Selection_Flag = pdTRUE;
 						}
-						else if ( '3' == auxdata )
+						else if ( TRES == auxdata )
 						{
 							//tcp_Statistics();
 						}
 					}
 					else
 					{
-						if ('1' == auxdata)
+						if ( ESC == auxdata )
+						{
+							Selection_Flag = pdFALSE;
+							data = "Choose an option: 1)PlayStop. 2)selection. 3)statistics.";
+							len = 56;
+							err = netconn_write(newconn, data, len, NETCONN_COPY);
+						}
+						if ( UNO == auxdata)
 						{
 
 							data = "Song 1. port:50007";
@@ -106,7 +113,7 @@ tcpecho_thread(void *arg)
 							err = netconn_write(newconn, data, len, NETCONN_COPY);
 							Selection_Flag = pdFALSE;
 						}
-						else if ('2' == auxdata)
+						else if ( DOS == auxdata)
 						{
 
 							data = "Song 2. port:50008";
@@ -114,7 +121,7 @@ tcpecho_thread(void *arg)
 							err = netconn_write(newconn, data, len, NETCONN_COPY);
 							Selection_Flag = pdFALSE;
 						}
-						else if ('3' == auxdata)
+						else if ( TRES == auxdata)
 						{
 
 							data = "Song 3. port:50009";
