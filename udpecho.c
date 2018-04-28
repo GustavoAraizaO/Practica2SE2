@@ -66,52 +66,52 @@ udpecho_thread(void *arg)
 		err = netconn_recv(conn, &buf);
 		if (err == ERR_OK) {
 			/*  no need netconn_connect here, since the netbuf contains the address */
-			//			if(netbuf_copy(buf, buffer, sizeof(buffer)) != buf->p->tot_len) {
-			//				LWIP_DEBUGF(LWIP_DBG_ON, ("netbuf_copy failed\n"));
-			//			} else {
-			//				buffer[buf->p->tot_len] = '\0';
-			////				err = netconn_send(conn, buf);
-			//				if(err != ERR_OK) {
-			//			//		LWIP_DEBUGF(LWIP_DBG_ON, ("netconn_send failed: %d\n", (int)err));
-			//				}
-			//				else
-			if (Flag_buffA)
-			{
-				buff_ptr = &bufferB[ 0 ];
-				Flag_buffB = pdFALSE;
-			}
-			else
-			{
-				buff_ptr = &bufferA[ 0 ];
-				Flag_buffB = pdTRUE;
-			}
+			if(netbuf_copy(buf, buffer, sizeof(buffer)) != buf->p->tot_len) {
+				LWIP_DEBUGF(LWIP_DBG_ON, ("netbuf_copy failed\n"));
+			} else {
+				buffer[buf->p->tot_len] = '\0';
+				//				err = netconn_send(conn, buf);
+				if(err != ERR_OK) {
+					//		LWIP_DEBUGF(LWIP_DBG_ON, ("netconn_send failed: %d\n", (int)err));
+				}
+				else
+					if (Flag_buffA)
+					{
+						buff_ptr = &bufferB[ 0 ];
+						Flag_buffB = pdFALSE;
+					}
+					else
+					{
+						buff_ptr = &bufferA[ 0 ];
+						Flag_buffB = pdTRUE;
+					}
 
-			for (buffercount = 0; buffercount < 4096; buffercount++)
-			{
-				buff_ptr = buffer[buffercount];
-				buff_ptr += buffercount;
-			}
-			if(Flag_buffB)
-			{
-				Flag_buffA = pdTRUE;
-			}
-			else
-			{
-				Flag_buffA = pdFALSE;
-			}
+				for (buffercount = 0; buffercount < 4096; buffercount++)
+				{
+					buff_ptr = buffer[buffercount];
+					buff_ptr += buffercount;
+				}
+				if(Flag_buffB)
+				{
+					Flag_buffA = pdTRUE;
+				}
+				else
+				{
+					Flag_buffA = pdFALSE;
+				}
 
-			//	PRINTF("%s\n", bufferCopy);
+				//	PRINTF("%s\n", bufferCopy);
 
+			}
+			netbuf_delete(buf);
 		}
-		netbuf_delete(buf);
 	}
-}
 
-/*-----------------------------------------------------------------------------------*/
-void
-udpecho_init(void)
-{
-	sys_thread_new("udpecho_thread", udpecho_thread, NULL, DEFAULT_THREAD_STACKSIZE, DEFAULT_THREAD_PRIO);
-}
+	/*-----------------------------------------------------------------------------------*/
+	void
+	udpecho_init(void)
+	{
+		sys_thread_new("udpecho_thread", udpecho_thread, NULL, DEFAULT_THREAD_STACKSIZE, DEFAULT_THREAD_PRIO);
+	}
 
 #endif /* LWIP_NETCONN */
