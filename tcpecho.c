@@ -57,32 +57,33 @@ tcpecho_thread(void *arg)
 		err = netconn_accept(conn, &newconn);
 		if (err == ERR_OK) {
 			struct netbuf *buf;
-			void *data;
+			char *data;
 			u16_t len;
 			u8_t Selection_Flag = pdFALSE;
-			u8_t auxdata;
+			char auxdata;
 
 			while ((err = netconn_recv(newconn, &buf)) == ERR_OK) {
 
 				do {
-					auxdata = &data;               // <------- ??
-					netbuf_data(buf, &data, &len);
-					PRINTF("%s", data);
+					               // <------- ??
+					netbuf_data(buf, (void *)&data, &len);
+					auxdata = *data;
+					//PRINTF("%s", data);
 //////////////////////////////////////////////////////////////////////////////////////////////
 					if(pdFALSE == Selection_Flag)
 					{
 
-						if ( &data == 0x200098a6)
+						if ( '0' == auxdata )
 						{
 							data = "Choose an option: 1)PlayStop. 2)selection. 3)statistics.";
 							len = 56;
 							err = netconn_write(newconn, data, len, NETCONN_COPY);
 						}
-						else if ( data == "1")
+						else if ( '1' == auxdata )
 						{
 							//tcp_playStop();
 						}
-						else if ( data == "2")
+						else if ( '2' == auxdata )
 						{
 							//tcp_Selection();
 							data = "Choose a song: 1)option1. 2)option2. 3)option3.";
@@ -90,32 +91,32 @@ tcpecho_thread(void *arg)
 							err = netconn_write(newconn, data, len, NETCONN_COPY);
 							Selection_Flag = pdTRUE;
 						}
-						else if ( data == "3")
+						else if ( '3' == auxdata )
 						{
 							//tcp_Statistics();
 						}
 					}
 					else
 					{
-						if ("1" == data)
+						if ('1' == auxdata)
 						{
-							netconn_bind(conn, IP_ADDR_ANY, 50007);
+
 							data = "Song 1. port:50007";
 							len = 18;
 							err = netconn_write(newconn, data, len, NETCONN_COPY);
 							Selection_Flag = pdFALSE;
 						}
-						else if ("2" == data)
+						else if ('2' == auxdata)
 						{
-							netconn_bind(conn, IP_ADDR_ANY, 50008);
+
 							data = "Song 2. port:50008";
 							len = 18;
 							err = netconn_write(newconn, data, len, NETCONN_COPY);
 							Selection_Flag = pdFALSE;
 						}
-						else if ("3" == data)
+						else if ('3' == auxdata)
 						{
-							netconn_bind(conn, IP_ADDR_ANY, 50009);
+
 							data = "Song 3. port:50009";
 							len = 18;
 							err = netconn_write(newconn, data, len, NETCONN_COPY);
