@@ -60,17 +60,31 @@ tcpecho_thread(void *arg)
 			char *data;
 			u16_t len;
 			u8_t Selection_Flag = pdFALSE;
+			u8_t PortFlag = pdFALSE;
+			u8_t portCount;
 			char auxdata;
+			u16_t portdata = pdFALSE;
 
 			while ((err = netconn_recv(newconn, &buf)) == ERR_OK) {
 
 				do {
-					// <------- ??
 					netbuf_data(buf, (void *)&data, &len);
 					auxdata = *data;
-					//PRINTF("%s", data);
 					//////////////////////////////////////////////////////////////////////////////////////////////
-					if(pdFALSE == Selection_Flag)
+					if ( pdTRUE == PortFlag )
+					{
+						u8_t auxPortdata = pdFALSE;
+						u16_t position = 10000;
+						for (portCount = pdFALSE; portCount <5; portCount++)
+						{
+							auxPortdata = *data;
+							portdata = portdata + ((auxPortdata-48)*position);
+							position = position/10;
+							data++;
+						}
+
+					}
+					if ( pdFALSE == Selection_Flag )
 					{
 
 						if ( ESC == auxdata )
@@ -86,18 +100,27 @@ tcpecho_thread(void *arg)
 						else if ( DOS == auxdata )
 						{
 							//tcp_Selection();
-							data = "Choose a song: 1)option1. 2)option2. 3)option3.";
-							len = 48;
+							//data = "Choose a song: 1)option1. 2)option2. 3)option3.";
+							data = "write the port to listen.";
+							len = 25;
 							err = netconn_write(newconn, data, len, NETCONN_COPY);
 							Selection_Flag = pdTRUE;
+							PortFlag = pdTRUE;
 						}
 						else if ( TRES == auxdata )
 						{
 							//tcp_Statistics();
 						}
+						else
+						{
+							data = "Invalid option, try again.";
+							len = 26;
+							err = netconn_write(newconn, data, len, NETCONN_COPY);
+						}
 					}
-					else
+					else if ( pdTRUE == Selection_Flag )
 					{
+
 						if ( ESC == auxdata )
 						{
 							Selection_Flag = pdFALSE;
@@ -105,7 +128,8 @@ tcpecho_thread(void *arg)
 							len = 56;
 							err = netconn_write(newconn, data, len, NETCONN_COPY);
 						}
-						if ( UNO == auxdata)
+
+						else if ( UNO == auxdata)
 						{
 
 							data = "Song 1. port:50007";
