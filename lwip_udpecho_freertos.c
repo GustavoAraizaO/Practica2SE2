@@ -55,6 +55,32 @@
 
 #include "DAC_tasks.h"
 
+
+/**************************************************************************************
+ * PLL to up the system frequency to 60 MHz
+ **************************************************************************************/
+
+#include "MK64F12.h"
+#include "MCG.h"
+#define CLK_FREQ_HZ 50000000  /* CLKIN0 frequency */
+#define SLOW_IRC_FREQ 32768	/*This is the approximate value for the slow irc*/
+#define FAST_IRC_FREQ 4000000 /*This is the approximate value for the fast irc*/
+#define EXTERNAL_CLOCK 0 /*It defines an external clock*/
+#define PLL_ENABLE 1 /**PLL is enabled*/
+#define PLL_DISABLE 0 /**PLL is disabled*/
+#define CRYSTAL_OSC 1  /*It defines an crystal oscillator*/
+#define LOW_POWER 0     /* Set the oscillator for low power mode */
+#define SLOW_IRC 0 		/* Set the slow IRC */
+#define CLK0_TYPE 0     /* Crystal or canned oscillator clock input */
+#define PLL0_PRDIV 25    /* PLL predivider value */
+#define PLL0_VDIV 30    /* PLL multiplier value*/
+/** Macros for debugging*/
+#define DEBUG
+#define PLL_DIRECT_INIT
+#define SYSTEM_CLOCK 60000000
+
+ /**************************************************************************************/
+
 /*******************************************************************************
  * Definitions
  ******************************************************************************/
@@ -150,7 +176,7 @@ static void stack_init ( void *arg )
 	PRINTF ( "************************************************\r\n" );
 
 	udpecho_init ();
-
+	DAC_init ();
 	vTaskDelete ( NULL );
 }
 
@@ -159,6 +185,14 @@ static void stack_init ( void *arg )
  */
 int main ( void )
 {
+	/*********************************************************************************************
+	 * System clock upping to 60 MHz
+	 *********************************************************************************************/
+    uint32_t mcg_clk_hz;    unsigned char modeMCG = 0;
+
+    mcg_clk_hz = pll_init(CLK_FREQ_HZ, LOW_POWER, EXTERNAL_CLOCK, PLL0_PRDIV, PLL0_VDIV, PLL_ENABLE);
+    /*********************************************************************************************/
+
 	SYSMPU_Type *base = SYSMPU;
 	BOARD_InitPins ();
 	BOARD_BootClockRUN ();
@@ -167,7 +201,6 @@ int main ( void )
 	base->CESR &= ~SYSMPU_CESR_VLD_MASK;
 
 	/* Initialize lwIP from thread */
-	DAC_init();
 	if (sys_thread_new ( "main", stack_init, NULL, INIT_THREAD_STACKSIZE,
 			INIT_THREAD_PRIO ) == NULL)
 		LWIP_ASSERT( "main(): Task creation failed.", 0 );

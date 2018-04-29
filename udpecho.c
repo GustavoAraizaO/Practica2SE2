@@ -30,7 +30,6 @@
  *
  */
 
-
 #include "udpecho.h"
 
 #include "lwip/opt.h"
@@ -69,6 +68,7 @@ static void udpecho_thread ( void *arg )
 	err_t err;
 	u32_t buffercount;
 	LWIP_UNUSED_ARG( arg );
+	uint8_t first_time_flag = pdTRUE;
 
 	conn = netconn_new( NETCONN_UDP );
 	netconn_bind ( conn, IP_ADDR_ANY, 50007 );
@@ -77,40 +77,25 @@ static void udpecho_thread ( void *arg )
 
 	while ( 1 )
 	{
-
 		err = netconn_recv ( conn, &buf );
 		if (err == ERR_OK)
 		{
-			/*  no need netconn_connect here, since the netbuf contains the address */
-			if (netbuf_copy(buf, buffer, sizeof(buffer)) != buf->p->tot_len)
+			if (pdTRUE == first_time_flag)
 			{
-				LWIP_DEBUGF( LWIP_DBG_ON, ("netbuf_copy failed\n") );
+				PIT_StartTimer ( PIT, kPIT_Chnl_0 );
+				first_time_flag == pdFALSE;
 			}
-			else
-			{
-				buffer [ buf->p->tot_len ] = '\0';
-				//				err = netconn_send(conn, buf);
-				if (err != ERR_OK)
+				if ( pdTRUE == bufferA_flag)
 				{
-					LWIP_DEBUGF( LWIP_DBG_ON,
-							("netconn_send failed: %d\n", (int)err) );
-				}
-				else if ( pdTRUE == bufferA_flag )
-				{
-					for ( buffercount = 0; buffercount < 4096; buffercount++ )
-					{
-						bufferB [ buffercount ] = buffer [ buffercount ];
-					}
+					netbuf_copy(buf, bufferB, sizeof(bufferB));
+					bufferB [ buf->p->tot_len ] = '\0';
 				}
 				else
 				{
-					for ( buffercount = 0; buffercount < 4096; buffercount++ )
-					{
-						bufferA [ buffercount ] = buffer [ buffercount ];
-						bufferA_flag = pdTRUE;
-					}
+					netbuf_copy(buf, bufferA, sizeof(bufferA));
+					bufferA [ buf->p->tot_len ] = '\0';
+					bufferA_flag = pdTRUE;
 				}
-			}
 			netbuf_delete ( buf );
 		}
 	}

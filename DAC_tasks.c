@@ -15,8 +15,6 @@ void PIT0_IRQHandler ( void )
 	uint16_t data_from_buffer;
 	uint8_t * bufferA_ptr;
 	uint8_t * bufferB_ptr;
-	BaseType_t xHigherPriorityTaskWoken;
-	xHigherPriorityTaskWoken = pdFALSE;
 
 	if (pdTRUE == bufferA_flag)
 	{
@@ -40,7 +38,7 @@ void PIT0_IRQHandler ( void )
 		data_cnt = data_cnt + 2;
 		if (data_cnt > BUFFER_SIZE)
 		{
-			bufferA_flag = pdFALSE;
+			data_cnt = 0;
 		}
 	}
 	PIT_ClearStatusFlags ( PIT, kPIT_Chnl_0, kPIT_TimerFlag );
@@ -57,11 +55,12 @@ void DAC_init ( void )
 
 	PIT_GetDefaultConfig ( &pitConfig );
 	PIT_Init ( PIT, &pitConfig );
+//	PIT_SetTimerPeriod ( PIT, kPIT_Chnl_0,
+//			USEC_TO_COUNT( 22.6757369F, CLOCK_GetFreq ( kCLOCK_BusClk ) ) );
 	PIT_SetTimerPeriod ( PIT, kPIT_Chnl_0,
-			USEC_TO_COUNT( 44100U, CLOCK_GetFreq ( kCLOCK_BusClk ) ) );
+			USEC_TO_COUNT( 226.757369F, CLOCK_GetFreq ( kCLOCK_BusClk ) ) );
 	PIT_EnableInterrupts ( PIT, kPIT_Chnl_0, kPIT_TimerInterruptEnable );
 	EnableIRQ ( PIT0_IRQn );
-	PIT_StartTimer ( PIT, kPIT_Chnl_0 );
 	DAC_GetDefaultConfig ( &dacConfigStruct );
 	DAC_Init ( DAC0, &dacConfigStruct );
 	DAC_Enable ( DAC0, pdTRUE );
