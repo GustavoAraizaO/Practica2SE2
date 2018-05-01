@@ -63,10 +63,9 @@ tcpecho_thread(void *arg)
 			struct netbuf *buf;
 			char *data;
 			u16_t len;
-			u8_t Selection_Flag = pdFALSE;
 			u8_t PortFlag = pdFALSE;
 			u8_t portCount;
-			char auxdata;
+			char auxdata = ESC;
 
 			while ((err = netconn_recv(newconn, &buf)) == ERR_OK) {
 
@@ -86,75 +85,44 @@ tcpecho_thread(void *arg)
 							position = position/10;
 							data++;
 						}
+						data = "The port has changed.";
+						len = 21;
+						err = netconn_write(newconn, data, len, NETCONN_COPY);
+						data = "                                               /n/r/r/n";
+						len = 45;
+						err = netconn_write(newconn, data, len, NETCONN_COPY);
+						auxdata = ESC;
+						PortFlag = pdFALSE;
 						g_FlagPort = pdTRUE;
-
 					}
-					if ( pdFALSE == Selection_Flag )
+					switch (auxdata)
 					{
-
-						if ( ESC == auxdata )
-						{
-							data = "Choose an option: 1)PlayStop. 2)selection. 3)statistics.";
-							len = 56;
-							err = netconn_write(newconn, data, len, NETCONN_COPY);
-						}
-						else if ( UNO == auxdata )
-						{
-							tcp_playStop();
-						}
-						else if ( DOS == auxdata )
-						{
-							data = "write the port to listen.";
-							len = 25;
-							err = netconn_write(newconn, data, len, NETCONN_COPY);
-							Selection_Flag = pdTRUE;
-							PortFlag = pdTRUE;
-						}
-						else if ( TRES == auxdata )
-						{
-							//tcp_Statistics();
-						}
-						else
-						{
-							data = "Invalid option, try again.";
-							len = 26;
-							err = netconn_write(newconn, data, len, NETCONN_COPY);
-						}
-					}
-					else if ( pdTRUE == Selection_Flag )
-					{
-
-						if ( ESC == auxdata )
-						{
-							Selection_Flag = pdFALSE;
-							data = "Choose an option: 1)PlayStop. 2)selection. 3)statistics.";
-							len = 56;
-							err = netconn_write(newconn, data, len, NETCONN_COPY);
-						}
-
-						else if ( UNO == auxdata)
-						{
-							data = "Song 1. port:50008";
-							len = 18;
-							err = netconn_write(newconn, data, len, NETCONN_COPY);
-							Selection_Flag = pdFALSE;
-						}
-						else if ( DOS == auxdata)
-						{
-
-							data = "Song 2. port:50009";
-							len = 18;
-							err = netconn_write(newconn, data, len, NETCONN_COPY);
-							Selection_Flag = pdFALSE;
-						}
-						else if ( TRES == auxdata)
-						{
-
-							data = "Song 3. port:50010";
-							len = 18;
-							err = netconn_write(newconn, data, len, NETCONN_COPY);
-							Selection_Flag = pdFALSE;
-						}
+					case ESC:
+						data = "Choose an option: 1)PlayStop. 2)selection. 3)statistics.";
+						len = 56;
+						err = netconn_write(newconn, data, len, NETCONN_COPY);
+						break;
+					case UNO:
+						tcp_playStop();
+						data = "Choose an option: 1)PlayStop. 2)selection. 3)statistics.";
+						len = 56;
+						err = netconn_write(newconn, data, len, NETCONN_COPY);
+						break;
+					case DOS:
+						data = "write the port to listen.";
+						len = 25;
+						err = netconn_write(newconn, data, len, NETCONN_COPY);
+						PortFlag = pdTRUE;
+						break;
+					case TRES:
+						//tcp_Statistics();
+						break;
+					default:
+						data = "Invalid option, try again.";
+						len = 26;
+						err = netconn_write(newconn, data, len, NETCONN_COPY);
+						auxdata = ESC;
+						break;
 					}
 					//end if
 				} while (netbuf_next(buf) >= 0);
@@ -184,7 +152,6 @@ tcp_playStop(void)
 	{
 		g_FlagPlayStop = pdFALSE;
 	}
-
 }
 /*-----------------------------------------------------------------------------------*/
 uint16_t
