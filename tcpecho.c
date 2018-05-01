@@ -37,25 +37,30 @@
 
 #include "lwip/sys.h"
 #include "lwip/api.h"
+
+uint8_t g_FlagPlayStop = pdTRUE;
+uint8_t g_FlagPort = pdFALSE;
+u16_t portdata = pdFALSE;
 /*-----------------------------------------------------------------------------------*/
-static void 
-tcpecho_thread(void *arg)
+static void tcpecho_thread ( void *arg )
 {
 	struct netconn *conn, *newconn;
 	err_t err;
-	LWIP_UNUSED_ARG(arg);
+	LWIP_UNUSED_ARG( arg );
 
 	/* Create a new connection identifier. */
-	conn = netconn_new(NETCONN_TCP);
-	netconn_bind(conn, IP_ADDR_ANY, 50007);
+	conn = netconn_new( NETCONN_TCP );
+	netconn_bind ( conn, IP_ADDR_ANY, 50007 );
 
 	/* Tell connection to go into listening mode. */
-	netconn_listen(conn);
+	netconn_listen( conn );
 
-	while (1) {
+	while ( 1 )
+	{
 		/* Grab new connection. */
-		err = netconn_accept(conn, &newconn);
-		if (err == ERR_OK) {
+		err = netconn_accept ( conn, &newconn );
+		if (err == ERR_OK)
+		{
 			struct netbuf *buf;
 			char *data;
 			u16_t len;
@@ -63,129 +68,158 @@ tcpecho_thread(void *arg)
 			u8_t PortFlag = pdFALSE;
 			u8_t portCount;
 			char auxdata;
-			u16_t portdata = pdFALSE;
 
-			while ((err = netconn_recv(newconn, &buf)) == ERR_OK) {
+			while ( ( err = netconn_recv ( newconn, &buf ) ) == ERR_OK )
+			{
 
-				do {
-					netbuf_data(buf, (void *)&data, &len);
+				do
+				{
+					netbuf_data ( buf, ( void * ) &data, &len );
 					auxdata = *data;
 					//////////////////////////////////////////////////////////////////////////////////////////////
-					if ( pdTRUE == PortFlag )
+					if ( pdTRUE == PortFlag)
 					{
 						u8_t auxPortdata = pdFALSE;
+						portdata = pdFALSE;
 						u16_t position = 10000;
-						for (portCount = pdFALSE; portCount <5; portCount++)
+						for ( portCount = pdFALSE; portCount < 5; portCount++ )
 						{
 							auxPortdata = *data;
-							portdata = portdata + ((auxPortdata-48)*position);
-							position = position/10;
+							portdata = portdata
+									+ ( ( auxPortdata - 48 ) * position );
+							position = position / 10;
 							data++;
 						}
+						g_FlagPort = pdTRUE;
 
 					}
-					if ( pdFALSE == Selection_Flag )
+					if ( pdFALSE == Selection_Flag)
 					{
 
-						if ( ESC == auxdata )
+						if (ESC == auxdata)
 						{
-							data = "Choose an option: 1)PlayStop. 2)selection. 3)statistics.";
+							data =
+									"Choose an option: 1)PlayStop. 2)selection. 3)statistics.";
 							len = 56;
-							err = netconn_write(newconn, data, len, NETCONN_COPY);
+							err = netconn_write( newconn, data, len,
+									NETCONN_COPY );
 						}
-						else if ( UNO == auxdata )
+						else if (UNO == auxdata)
 						{
-							//tcp_playStop();
+							tcp_playStop ();
 						}
-						else if ( DOS == auxdata )
+						else if (DOS == auxdata)
 						{
-							//tcp_Selection();
-							//data = "Choose a song: 1)option1. 2)option2. 3)option3.";
 							data = "write the port to listen.";
 							len = 25;
-							err = netconn_write(newconn, data, len, NETCONN_COPY);
+							err = netconn_write( newconn, data, len,
+									NETCONN_COPY );
 							Selection_Flag = pdTRUE;
 							PortFlag = pdTRUE;
 						}
-						else if ( TRES == auxdata )
+						else if (TRES == auxdata)
 						{
-							//tcp_Statistics();
+							char pkg_received [2];
+							data = "Packages sent every 10 seconds: 86.1";
+							len = 35;
+							err = netconn_write( newconn, data, len,
+									NETCONN_COPY );
+							data = "Packages received:";
+							len = 18;
+							err = netconn_write( newconn, data, len,
+									NETCONN_COPY );
+							pkg_received[0] = (char) (get_pkg_received() /10) * 2 + '0';
+							pkg_received[1] = (char) (get_pkg_received() %10) * 2 + '0';
+							data = pkg_received;
+							len = 2;
+							err = netconn_write( newconn, data, len,
+									NETCONN_COPY );
+
 						}
 						else
 						{
 							data = "Invalid option, try again.";
 							len = 26;
-							err = netconn_write(newconn, data, len, NETCONN_COPY);
+							err = netconn_write( newconn, data, len,
+									NETCONN_COPY );
 						}
 					}
-					else if ( pdTRUE == Selection_Flag )
+					else if ( pdTRUE == Selection_Flag)
 					{
 
-						if ( ESC == auxdata )
+						if (ESC == auxdata)
 						{
 							Selection_Flag = pdFALSE;
-							data = "Choose an option: 1)PlayStop. 2)selection. 3)statistics.";
+							data =
+									"Choose an option: 1)PlayStop. 2)selection. 3)statistics.";
 							len = 56;
-							err = netconn_write(newconn, data, len, NETCONN_COPY);
+							err = netconn_write( newconn, data, len,
+									NETCONN_COPY );
 						}
 
-						else if ( UNO == auxdata)
+						else if (UNO == auxdata)
 						{
-
-							data = "Song 1. port:50007";
+							data = "Song 1. port:50008";
 							len = 18;
-							err = netconn_write(newconn, data, len, NETCONN_COPY);
+							err = netconn_write( newconn, data, len,
+									NETCONN_COPY );
 							Selection_Flag = pdFALSE;
 						}
-						else if ( DOS == auxdata)
+						else if (DOS == auxdata)
 						{
 
-							data = "Song 2. port:50008";
+							data = "Song 2. port:50009";
 							len = 18;
-							err = netconn_write(newconn, data, len, NETCONN_COPY);
+							err = netconn_write( newconn, data, len,
+									NETCONN_COPY );
 							Selection_Flag = pdFALSE;
 						}
-						else if ( TRES == auxdata)
+						else if (TRES == auxdata)
 						{
 
-							data = "Song 3. port:50009";
+							data = "Song 3. port:50010";
 							len = 18;
-							err = netconn_write(newconn, data, len, NETCONN_COPY);
+							err = netconn_write( newconn, data, len,
+									NETCONN_COPY );
 							Selection_Flag = pdFALSE;
 						}
 					}
 					//end if
-				} while (netbuf_next(buf) >= 0);
-				netbuf_delete(buf);
+				} while ( netbuf_next ( buf ) >= 0 );
+				netbuf_delete ( buf );
 			}
 			/* Close connection and discard connection identifier. */
-			netconn_close(newconn);
-			netconn_delete(newconn);
+			netconn_close ( newconn );
+			netconn_delete ( newconn );
 		}
 	}
 }
 /*-----------------------------------------------------------------------------------*/
-void
-tcpecho_init(void)
+void tcpecho_init ( void )
 {
-	sys_thread_new("tcpecho_thread", tcpecho_thread, NULL, DEFAULT_THREAD_STACKSIZE, DEFAULT_THREAD_PRIO);
+	sys_thread_new ( "tcpecho_thread", tcpecho_thread, NULL,
+			DEFAULT_THREAD_STACKSIZE, DEFAULT_THREAD_PRIO );
 }
 /*-----------------------------------------------------------------------------------*/
-void
-tcp_playStop(void)
+void tcp_playStop ( void )
 {
+	if (pdFALSE == g_FlagPlayStop)
+	{
+		g_FlagPlayStop = pdTRUE;
+	}
+	else
+	{
+		g_FlagPlayStop = pdFALSE;
+	}
 
 }
 /*-----------------------------------------------------------------------------------*/
-void
-tcp_Selection(void)
+uint16_t tcp_portSelection ( void )
 {
-
-
+	return portdata;
 }
 /*-----------------------------------------------------------------------------------*/
-void
-tcp_Statistics(void)
+void tcp_Statistics ( void )
 {
 
 }
