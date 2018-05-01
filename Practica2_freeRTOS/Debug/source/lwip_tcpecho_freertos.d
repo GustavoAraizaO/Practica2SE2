@@ -32,6 +32,7 @@ source/lwip_tcpecho_freertos.o source/lwip_tcpecho_freertos.d: \
  C:\Projects_2\Practica2_freeRTOS\freertos\include/queue.h \
  C:\Projects_2\Practica2_freeRTOS\lwip\contrib\apps/tcpecho/tcpecho.h \
  C:\Projects_2\Practica2_freeRTOS\lwip\contrib\apps/udpecho/udpecho.h \
+ C:\Projects_2\Practica2_freeRTOS\drivers/fsl_pit.h \
  C:\Projects_2\Practica2_freeRTOS\lwip\src\include/lwip/tcpip.h \
  C:\Projects_2\Practica2_freeRTOS\lwip\src\include/lwip/err.h \
  C:\Projects_2\Practica2_freeRTOS\lwip\src\include/lwip/timeouts.h \
@@ -53,6 +54,15 @@ source/lwip_tcpecho_freertos.o source/lwip_tcpecho_freertos.d: \
  C:\Projects_2\Practica2_freeRTOS\lwip\src\include/lwip/prot/ethernet.h \
  C:\Projects_2\Practica2_freeRTOS\lwip\port/ethernetif.h \
  C:\Projects_2\Practica2_freeRTOS\drivers/fsl_enet.h \
+ ../source/DAC_tasks.h \
+ C:\Projects_2\Practica2_freeRTOS\freertos\include/event_groups.h \
+ C:\Projects_2\Practica2_freeRTOS\freertos\include/timers.h \
+ C:\Projects_2\Practica2_freeRTOS\freertos\include/task.h \
+ C:\Projects_2\Practica2_freeRTOS\drivers/fsl_dac.h \
+ C:\Projects_2\Practica2_freeRTOS\drivers/common_header.h \
+ C:\Projects_2\Practica2_freeRTOS\drivers/fsl_dac.h \
+ C:\Projects_2\Practica2_freeRTOS/lwip\contrib\apps\udpecho\udpecho.h \
+ C:\Projects_2\Practica2_freeRTOS/lwip\contrib\apps\tcpecho\tcpecho.h \
  C:\Projects_2\Practica2_freeRTOS\board/board.h \
  C:\Projects_2\Practica2_freeRTOS\board/clock_config.h \
  C:\Projects_2\Practica2_freeRTOS\drivers/fsl_gpio.h \
@@ -123,6 +133,8 @@ C:\Projects_2\Practica2_freeRTOS\lwip\contrib\apps/tcpecho/tcpecho.h:
 
 C:\Projects_2\Practica2_freeRTOS\lwip\contrib\apps/udpecho/udpecho.h:
 
+C:\Projects_2\Practica2_freeRTOS\drivers/fsl_pit.h:
+
 C:\Projects_2\Practica2_freeRTOS\lwip\src\include/lwip/tcpip.h:
 
 C:\Projects_2\Practica2_freeRTOS\lwip\src\include/lwip/err.h:
@@ -164,6 +176,24 @@ C:\Projects_2\Practica2_freeRTOS\lwip\src\include/lwip/prot/ethernet.h:
 C:\Projects_2\Practica2_freeRTOS\lwip\port/ethernetif.h:
 
 C:\Projects_2\Practica2_freeRTOS\drivers/fsl_enet.h:
+
+../source/DAC_tasks.h:
+
+C:\Projects_2\Practica2_freeRTOS\freertos\include/event_groups.h:
+
+C:\Projects_2\Practica2_freeRTOS\freertos\include/timers.h:
+
+C:\Projects_2\Practica2_freeRTOS\freertos\include/task.h:
+
+C:\Projects_2\Practica2_freeRTOS\drivers/fsl_dac.h:
+
+C:\Projects_2\Practica2_freeRTOS\drivers/common_header.h:
+
+C:\Projects_2\Practica2_freeRTOS\drivers/fsl_dac.h:
+
+C:\Projects_2\Practica2_freeRTOS/lwip\contrib\apps\udpecho\udpecho.h:
+
+C:\Projects_2\Practica2_freeRTOS/lwip\contrib\apps\tcpecho\tcpecho.h:
 
 C:\Projects_2\Practica2_freeRTOS\board/board.h:
 

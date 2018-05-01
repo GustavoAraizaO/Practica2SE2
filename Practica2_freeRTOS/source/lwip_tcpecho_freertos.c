@@ -45,7 +45,7 @@
 #include "lwip/tcpip.h"
 #include "netif/ethernet.h"
 #include "ethernetif.h"
-
+#include "DAC_tasks.h"
 #include "board.h"
 
 #include "fsl_device_registers.h"
@@ -140,7 +140,7 @@ static void stack_init(void *arg)
 
     tcpecho_init();
     udpecho_init();
-
+    DAC_init ();
     vTaskDelete(NULL);
 }
 

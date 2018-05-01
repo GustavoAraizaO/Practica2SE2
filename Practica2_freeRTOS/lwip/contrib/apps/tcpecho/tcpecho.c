@@ -37,6 +37,10 @@
 
 #include "lwip/sys.h"
 #include "lwip/api.h"
+
+uint8_t g_FlagPlayStop = pdTRUE;
+uint8_t g_FlagPort = pdFALSE;
+u16_t portdata = pdFALSE;
 /*-----------------------------------------------------------------------------------*/
 static void 
 tcpecho_thread(void *arg)
@@ -63,7 +67,6 @@ tcpecho_thread(void *arg)
 			u8_t PortFlag = pdFALSE;
 			u8_t portCount;
 			char auxdata;
-			u16_t portdata = pdFALSE;
 
 			while ((err = netconn_recv(newconn, &buf)) == ERR_OK) {
 
@@ -74,6 +77,7 @@ tcpecho_thread(void *arg)
 					if ( pdTRUE == PortFlag )
 					{
 						u8_t auxPortdata = pdFALSE;
+						portdata = pdFALSE;
 						u16_t position = 10000;
 						for (portCount = pdFALSE; portCount <5; portCount++)
 						{
@@ -82,6 +86,7 @@ tcpecho_thread(void *arg)
 							position = position/10;
 							data++;
 						}
+						g_FlagPort = pdTRUE;
 
 					}
 					if ( pdFALSE == Selection_Flag )
@@ -95,12 +100,10 @@ tcpecho_thread(void *arg)
 						}
 						else if ( UNO == auxdata )
 						{
-							//tcp_playStop();
+							tcp_playStop();
 						}
 						else if ( DOS == auxdata )
 						{
-							//tcp_Selection();
-							//data = "Choose a song: 1)option1. 2)option2. 3)option3.";
 							data = "write the port to listen.";
 							len = 25;
 							err = netconn_write(newconn, data, len, NETCONN_COPY);
@@ -131,8 +134,7 @@ tcpecho_thread(void *arg)
 
 						else if ( UNO == auxdata)
 						{
-
-							data = "Song 1. port:50007";
+							data = "Song 1. port:50008";
 							len = 18;
 							err = netconn_write(newconn, data, len, NETCONN_COPY);
 							Selection_Flag = pdFALSE;
@@ -140,7 +142,7 @@ tcpecho_thread(void *arg)
 						else if ( DOS == auxdata)
 						{
 
-							data = "Song 2. port:50008";
+							data = "Song 2. port:50009";
 							len = 18;
 							err = netconn_write(newconn, data, len, NETCONN_COPY);
 							Selection_Flag = pdFALSE;
@@ -148,7 +150,7 @@ tcpecho_thread(void *arg)
 						else if ( TRES == auxdata)
 						{
 
-							data = "Song 3. port:50009";
+							data = "Song 3. port:50010";
 							len = 18;
 							err = netconn_write(newconn, data, len, NETCONN_COPY);
 							Selection_Flag = pdFALSE;
@@ -174,14 +176,21 @@ tcpecho_init(void)
 void
 tcp_playStop(void)
 {
+	if(pdFALSE == g_FlagPlayStop)
+	{
+		g_FlagPlayStop = pdTRUE;
+	}
+	else
+	{
+		g_FlagPlayStop = pdFALSE;
+	}
 
 }
 /*-----------------------------------------------------------------------------------*/
-void
-tcp_Selection(void)
+uint16_t
+tcp_portSelection(void)
 {
-
-
+	return portdata;
 }
 /*-----------------------------------------------------------------------------------*/
 void

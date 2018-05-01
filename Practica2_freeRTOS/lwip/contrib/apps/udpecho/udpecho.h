@@ -32,6 +32,18 @@
 #ifndef LWIP_UDPECHO_H
 #define LWIP_UDPECHO_H
 
+#include "stdint.h"
+#include "fsl_pit.h"
+
+#define BUFFER_A_READY (1<<0)
+#define BUFFER_A_DONE (1<<1)
+#define BUFFER_B_READY (1<<2)
+#define BUFFER_B_DONE (1<<3)
+#define FIRST_BUFFER_COPY (1<<4)
+
+uint8_t * get_BufferA (void);
+uint8_t * get_BufferB (void);
+
 void udpecho_init(void);
 
 #endif /* LWIP_UDPECHO_H */

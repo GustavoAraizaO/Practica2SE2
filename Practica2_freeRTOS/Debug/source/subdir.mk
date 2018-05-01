@@ -4,14 +4,17 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
+../source/DAC_tasks.c \
 ../source/lwip_tcpecho_freertos.c \
 ../source/semihost_hardfault.c 
 
 OBJS += \
+./source/DAC_tasks.o \
 ./source/lwip_tcpecho_freertos.o \
 ./source/semihost_hardfault.o 
 
 C_DEPS += \
+./source/DAC_tasks.d \
 ./source/lwip_tcpecho_freertos.d \
 ./source/semihost_hardfault.d 
 

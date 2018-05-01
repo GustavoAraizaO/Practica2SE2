@@ -6,9 +6,11 @@
 C_SRCS += \
 ../drivers/fsl_clock.c \
 ../drivers/fsl_common.c \
+../drivers/fsl_dac.c \
 ../drivers/fsl_enet.c \
 ../drivers/fsl_flash.c \
 ../drivers/fsl_gpio.c \
+../drivers/fsl_pit.c \
 ../drivers/fsl_sim.c \
 ../drivers/fsl_smc.c \
 ../drivers/fsl_uart.c 
@@ -16,9 +18,11 @@ C_SRCS += \
 OBJS += \
 ./drivers/fsl_clock.o \
 ./drivers/fsl_common.o \
+./drivers/fsl_dac.o \
 ./drivers/fsl_enet.o \
 ./drivers/fsl_flash.o \
 ./drivers/fsl_gpio.o \
+./drivers/fsl_pit.o \
 ./drivers/fsl_sim.o \
 ./drivers/fsl_smc.o \
 ./drivers/fsl_uart.o 
@@ -26,9 +30,11 @@ OBJS += \
 C_DEPS += \
 ./drivers/fsl_clock.d \
 ./drivers/fsl_common.d \
+./drivers/fsl_dac.d \
 ./drivers/fsl_enet.d \
 ./drivers/fsl_flash.d \
 ./drivers/fsl_gpio.d \
+./drivers/fsl_pit.d \
 ./drivers/fsl_sim.d \
 ./drivers/fsl_smc.d \
 ./drivers/fsl_uart.d 

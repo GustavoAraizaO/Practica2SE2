@@ -1,13 +1,7 @@
 lwip/contrib/apps/udpecho/udpecho.o lwip/contrib/apps/udpecho/udpecho.d: \
  ../lwip/contrib/apps/udpecho/udpecho.c \
  ../lwip/contrib/apps/udpecho/udpecho.h \
- C:\Projects_2\Practica2_freeRTOS\lwip\src\include/lwip/opt.h \
- C:\Projects_2\Practica2_freeRTOS\source/lwipopts.h \
- C:\Projects_2\Practica2_freeRTOS\lwip\src\include/lwip/debug.h \
- C:\Projects_2\Practica2_freeRTOS\lwip\src\include/lwip/arch.h \
- C:\Projects_2\Practica2_freeRTOS\lwip\port/arch/cc.h \
- C:\Projects_2\Practica2_freeRTOS\lwip\port/arch/sys_arch.h \
- C:\Projects_2\Practica2_freeRTOS\utilities/fsl_debug_console.h \
+ C:\Projects_2\Practica2_freeRTOS\drivers/fsl_pit.h \
  C:\Projects_2\Practica2_freeRTOS\drivers/fsl_common.h \
  C:\Projects_2\Practica2_freeRTOS\CMSIS/fsl_device_registers.h \
  C:\Projects_2\Practica2_freeRTOS\CMSIS/MK64F12.h \
@@ -18,6 +12,14 @@ lwip/contrib/apps/udpecho/udpecho.o lwip/contrib/apps/udpecho/udpecho.d: \
  C:\Projects_2\Practica2_freeRTOS\CMSIS/system_MK64F12.h \
  C:\Projects_2\Practica2_freeRTOS\CMSIS/MK64F12_features.h \
  C:\Projects_2\Practica2_freeRTOS\drivers/fsl_clock.h \
+ C:\Projects_2\Practica2_freeRTOS\lwip\contrib\apps\tcpecho/tcpecho.h \
+ C:\Projects_2\Practica2_freeRTOS\lwip\src\include/lwip/opt.h \
+ C:\Projects_2\Practica2_freeRTOS\source/lwipopts.h \
+ C:\Projects_2\Practica2_freeRTOS\lwip\src\include/lwip/debug.h \
+ C:\Projects_2\Practica2_freeRTOS\lwip\src\include/lwip/arch.h \
+ C:\Projects_2\Practica2_freeRTOS\lwip\port/arch/cc.h \
+ C:\Projects_2\Practica2_freeRTOS\lwip\port/arch/sys_arch.h \
+ C:\Projects_2\Practica2_freeRTOS\utilities/fsl_debug_console.h \
  C:\Projects_2\Practica2_freeRTOS\drivers/fsl_common.h \
  C:\Projects_2\Practica2_freeRTOS\freertos\include/FreeRTOS.h \
  C:\Projects_2\Practica2_freeRTOS\source/FreeRTOSConfig.h \
@@ -41,23 +43,14 @@ lwip/contrib/apps/udpecho/udpecho.o lwip/contrib/apps/udpecho/udpecho.d: \
  C:\Projects_2\Practica2_freeRTOS\lwip\src\include/lwip/ip6_addr.h \
  C:\Projects_2\Practica2_freeRTOS\lwip\src\include/lwip/def.h \
  C:\Projects_2\Practica2_freeRTOS\lwip\src\include/lwip/sys.h \
- C:\Projects_2\Practica2_freeRTOS\lwip\port/arch/sys_arch.h
+ C:\Projects_2\Practica2_freeRTOS\lwip\port/arch/sys_arch.h \
+ C:\Projects_2\Practica2_freeRTOS\freertos\include/event_groups.h \
+ C:\Projects_2\Practica2_freeRTOS\freertos\include/timers.h \
+ C:\Projects_2\Practica2_freeRTOS\freertos\include/task.h
 
 ../lwip/contrib/apps/udpecho/udpecho.h:
 
-C:\Projects_2\Practica2_freeRTOS\lwip\src\include/lwip/opt.h:
-
-C:\Projects_2\Practica2_freeRTOS\source/lwipopts.h:
-
-C:\Projects_2\Practica2_freeRTOS\lwip\src\include/lwip/debug.h:
-
-C:\Projects_2\Practica2_freeRTOS\lwip\src\include/lwip/arch.h:
-
-C:\Projects_2\Practica2_freeRTOS\lwip\port/arch/cc.h:
-
-C:\Projects_2\Practica2_freeRTOS\lwip\port/arch/sys_arch.h:
-
-C:\Projects_2\Practica2_freeRTOS\utilities/fsl_debug_console.h:
+C:\Projects_2\Practica2_freeRTOS\drivers/fsl_pit.h:
 
 C:\Projects_2\Practica2_freeRTOS\drivers/fsl_common.h:
 
@@ -78,6 +71,22 @@ C:\Projects_2\Practica2_freeRTOS\CMSIS/system_MK64F12.h:
 C:\Projects_2\Practica2_freeRTOS\CMSIS/MK64F12_features.h:
 
 C:\Projects_2\Practica2_freeRTOS\drivers/fsl_clock.h:
+
+C:\Projects_2\Practica2_freeRTOS\lwip\contrib\apps\tcpecho/tcpecho.h:
+
+C:\Projects_2\Practica2_freeRTOS\lwip\src\include/lwip/opt.h:
+
+C:\Projects_2\Practica2_freeRTOS\source/lwipopts.h:
+
+C:\Projects_2\Practica2_freeRTOS\lwip\src\include/lwip/debug.h:
+
+C:\Projects_2\Practica2_freeRTOS\lwip\src\include/lwip/arch.h:
+
+C:\Projects_2\Practica2_freeRTOS\lwip\port/arch/cc.h:
+
+C:\Projects_2\Practica2_freeRTOS\lwip\port/arch/sys_arch.h:
+
+C:\Projects_2\Practica2_freeRTOS\utilities/fsl_debug_console.h:
 
 C:\Projects_2\Practica2_freeRTOS\drivers/fsl_common.h:
 
@@ -126,3 +135,9 @@ C:\Projects_2\Practica2_freeRTOS\lwip\src\include/lwip/def.h:
 C:\Projects_2\Practica2_freeRTOS\lwip\src\include/lwip/sys.h:
 
 C:\Projects_2\Practica2_freeRTOS\lwip\port/arch/sys_arch.h:
+
+C:\Projects_2\Practica2_freeRTOS\freertos\include/event_groups.h:
+
+C:\Projects_2\Practica2_freeRTOS\freertos\include/timers.h:
+
+C:\Projects_2\Practica2_freeRTOS\freertos\include/task.h:
