@@ -40,11 +40,16 @@
 #include "lwip/sys.h"
 #include "event_groups.h"
 #include "semphr.h"
-#include "common_header.h"
 
 uint8_t bufferA [ 4096 ];
 uint8_t bufferB [ 4096 ];
-uint8_t bufferA_flag = pdFALSE;
+
+uint8_t bufferA_copy_done_flag = pdFALSE;
+uint8_t bufferB_copy_done_flag = pdFALSE;
+uint8_t bufferA_done_flag = pdFALSE;
+uint8_t bufferB_done_flag = pdTRUE;
+
+uint8_t buffer_first_flag = pdTRUE;
 
 uint8_t * get_BufferA ( void )
 {
@@ -68,7 +73,6 @@ static void udpecho_thread ( void *arg )
 	err_t err;
 	u32_t buffercount;
 	LWIP_UNUSED_ARG( arg );
-	uint8_t first_time_flag = pdTRUE;
 
 	conn = netconn_new( NETCONN_UDP );
 	netconn_bind ( conn, IP_ADDR_ANY, 50007 );
@@ -80,22 +84,31 @@ static void udpecho_thread ( void *arg )
 		err = netconn_recv ( conn, &buf );
 		if (err == ERR_OK)
 		{
-			if (pdTRUE == first_time_flag)
+
+			if ( pdTRUE == bufferA_copy_done_flag && pdTRUE == bufferB_done_flag )
 			{
-				PIT_StartTimer ( PIT, kPIT_Chnl_0 );
-				first_time_flag == pdFALSE;
+				bufferB_copy_done_flag = pdFALSE;
+				bufferB_done_flag = pdFALSE;
+				netbuf_copy( buf, bufferB, sizeof ( bufferB ) );
+				bufferB [ buf->p->tot_len ] = '\0';
+				bufferB_copy_done_flag = pdTRUE;
 			}
-				if ( pdTRUE == bufferA_flag)
+			else if ( (pdTRUE == bufferB_copy_done_flag && pdTRUE == bufferA_done_flag) || (pdTRUE == buffer_first_flag) )
+			{
+				if (pdTRUE == buffer_first_flag)
 				{
-					netbuf_copy(buf, bufferB, sizeof(bufferB));
-					bufferB [ buf->p->tot_len ] = '\0';
+					buffer_first_flag = pdFALSE;
+					PIT_StartTimer ( PIT, kPIT_Chnl_0 );
 				}
 				else
 				{
-					netbuf_copy(buf, bufferA, sizeof(bufferA));
-					bufferA [ buf->p->tot_len ] = '\0';
-					bufferA_flag = pdTRUE;
+					bufferA_done_flag = pdFALSE;
 				}
+				bufferA_copy_done_flag = pdFALSE;
+				netbuf_copy( buf, bufferA, sizeof ( bufferA ) );
+				bufferA [ buf->p->tot_len ] = '\0';
+				bufferA_copy_done_flag = pdTRUE;
+			}
 			netbuf_delete ( buf );
 		}
 	}
