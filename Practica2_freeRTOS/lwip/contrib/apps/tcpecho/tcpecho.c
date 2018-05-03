@@ -41,8 +41,9 @@
 uint8_t g_FlagPlayStop = pdTRUE;
 uint8_t g_FlagPort = pdFALSE;
 u16_t portdata = pdFALSE;
+char pkg_received[2];
 /*-----------------------------------------------------------------------------------*/
-static void 
+static void
 tcpecho_thread(void *arg)
 {
 	struct netconn *conn, *newconn;
@@ -66,6 +67,7 @@ tcpecho_thread(void *arg)
 			u8_t PortFlag = pdFALSE;
 			u8_t portCount;
 			char auxdata = ESC;
+
 
 			while ((err = netconn_recv(newconn, &buf)) == ERR_OK) {
 
@@ -115,7 +117,7 @@ tcpecho_thread(void *arg)
 						PortFlag = pdTRUE;
 						break;
 					case TRES:
-						//tcp_Statistics();
+
 						break;
 					default:
 						data = "Invalid option, try again.";

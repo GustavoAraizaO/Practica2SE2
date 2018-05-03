@@ -31,7 +31,6 @@
  */
 
 #include "udpecho.h"
-#include "tcpecho.h"
 
 #include "lwip/opt.h"
 
@@ -49,8 +48,8 @@ uint8_t bufferA_copy_done_flag = pdFALSE;
 uint8_t bufferB_copy_done_flag = pdFALSE;
 uint8_t bufferA_done_flag = pdFALSE;
 uint8_t bufferB_done_flag = pdTRUE;
+
 uint8_t buffer_first_flag = pdTRUE;
-extern uint8_t g_FlagPort;
 
 uint8_t * get_BufferA ( void )
 {
@@ -76,23 +75,13 @@ static void udpecho_thread ( void *arg )
 	LWIP_UNUSED_ARG( arg );
 
 	conn = netconn_new( NETCONN_UDP );
-	netconn_bind ( conn, IP_ADDR_ANY, 50008 );
+	netconn_bind ( conn, IP_ADDR_ANY, 50007 );
 
 	LWIP_ERROR( "udpecho: invalid conn", (conn != NULL), return; );
 
 	while ( 1 )
 	{
-		if (pdTRUE == g_FlagPort)
-		{
-			netbuf_delete ( buf );
-			uint16_t portselect;
-			portselect = tcp_portSelection();
-			netconn_bind ( conn, IP_ADDR_ANY, portselect );
-			LWIP_ERROR( "udpecho: invalid conn", (conn != NULL), return; );
-			g_FlagPort = pdFALSE;
-		}
 		err = netconn_recv ( conn, &buf );
-
 		if (err == ERR_OK)
 		{
 
@@ -129,7 +118,7 @@ static void udpecho_thread ( void *arg )
 void udpecho_init ( void )
 {
 	sys_thread_new ( "udpecho_thread", udpecho_thread, NULL,
-			DEFAULT_THREAD_STACKSIZE, DEFAULT_THREAD_PRIO );
+	DEFAULT_THREAD_STACKSIZE, DEFAULT_THREAD_PRIO );
 }
 
 #endif /* LWIP_NETCONN */

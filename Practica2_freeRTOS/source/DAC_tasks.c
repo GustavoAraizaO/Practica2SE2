@@ -73,7 +73,7 @@ void DAC_init ( void )
 
 	//Working time period for 8.82 KHz sampling
 	PIT_SetTimerPeriod ( PIT, kPIT_Chnl_0,
-			USEC_TO_COUNT( 113.378684F, CLOCK_GetFreq ( kCLOCK_BusClk ) ) );
+			USEC_TO_COUNT( 45.3514F, CLOCK_GetFreq ( kCLOCK_BusClk ) ) );
 
 	//Working time period for 17.64 KHz sampling
 	//	PIT_SetTimerPeriod ( PIT, kPIT_Chnl_0,
