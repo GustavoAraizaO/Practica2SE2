@@ -1,6 +1,7 @@
 #include "DAC_tasks.h"
 
 uint16_t data_cnt;
+uint8_t pkg_rcv;
 
 uint8_t bufferA_read_done_flag = pdFALSE;
 uint8_t bufferB_read_done_flag = pdTRUE;
@@ -10,6 +11,7 @@ extern uint8_t bufferA_done_flag;
 extern uint8_t bufferB_copy_done_flag;
 extern uint8_t bufferB_done_flag;
 extern uint8_t buffer_first_copy_flag;
+extern uint8_t g_FlagPlayStop;
 
 void PIT0_IRQHandler ( void )
 {
@@ -17,37 +19,56 @@ void PIT0_IRQHandler ( void )
 	uint8_t * bufferA_ptr;
 	uint8_t * bufferB_ptr;
 
-	if (pdTRUE == bufferA_copy_done_flag && pdTRUE == bufferB_read_done_flag)
+	if (pdTRUE == g_FlagPlayStop)
 	{
-		bufferA_read_done_flag = pdFALSE;
-		bufferA_ptr = get_BufferA ();
-		data_from_buffer = * ( bufferA_ptr + data_cnt )
-				+ ( * ( bufferA_ptr + data_cnt + 1 ) << 8 );
-		DAC_SetBufferValue ( DAC0, 0U, data_from_buffer );
-		data_cnt = data_cnt + 2;
-		if (data_cnt > BUFFER_SIZE)
+		if (pdTRUE == bufferA_copy_done_flag && pdTRUE == bufferB_read_done_flag)
 		{
-			data_cnt = 0;
-			bufferA_done_flag = pdTRUE;
-			bufferA_read_done_flag = pdTRUE;
+			bufferA_read_done_flag = pdFALSE;
+			bufferA_ptr = get_BufferA ();
+			data_from_buffer = * ( bufferA_ptr + data_cnt )
+										+ ( * ( bufferA_ptr + data_cnt + 1 ) << 8 );
+			DAC_SetBufferValue ( DAC0, 0U, data_from_buffer );
+			data_cnt = data_cnt + 2;
+			if (data_cnt > BUFFER_SIZE)
+			{
+				data_cnt = 0;
+				bufferA_done_flag = pdTRUE;
+				bufferA_read_done_flag = pdTRUE;
+			}
 		}
-	}
-	else if (pdTRUE == bufferB_copy_done_flag && pdTRUE == bufferA_read_done_flag)
-	{
-		bufferB_read_done_flag = pdFALSE;
-		bufferB_ptr = get_BufferB ();
-		data_from_buffer = * ( bufferB_ptr + data_cnt )
-				+ ( * ( bufferB_ptr + data_cnt + 1 ) << 8 );
-		DAC_SetBufferValue ( DAC0, 0U, data_from_buffer );
-		data_cnt = data_cnt + 2;
-		if (data_cnt > BUFFER_SIZE)
+		else if (pdTRUE == bufferB_copy_done_flag && pdTRUE == bufferA_read_done_flag)
 		{
-			data_cnt = 0;
-			bufferB_done_flag = pdTRUE;
-			bufferB_read_done_flag = pdTRUE;
+			bufferB_read_done_flag = pdFALSE;
+			bufferB_ptr = get_BufferB ();
+			data_from_buffer = * ( bufferB_ptr + data_cnt )
+										+ ( * ( bufferB_ptr + data_cnt + 1 ) << 8 );
+			DAC_SetBufferValue ( DAC0, 0U, data_from_buffer );
+			data_cnt = data_cnt + 2;
+			if (data_cnt > BUFFER_SIZE)
+			{
+				data_cnt = 0;
+				bufferB_done_flag = pdTRUE;
+				bufferB_read_done_flag = pdTRUE;
+			}
+		}
+		else
+		{
+			DAC_SetBufferValue ( DAC0, 0U, MIDVAL );
 		}
 	}
 	PIT_ClearStatusFlags ( PIT, kPIT_Chnl_0, kPIT_TimerFlag );
+}
+
+void PIT1_IRQHandler( void )
+{
+	pkg_rcv = get_pkg_count();
+	clear_pkg_count();
+	PIT_ClearStatusFlags ( PIT, kPIT_Chnl_1, kPIT_TimerFlag );
+}
+
+uint8_t get_pkg_received (void)
+{
+	return pkg_rcv;
 }
 
 void DAC_init ( void )
@@ -60,23 +81,23 @@ void DAC_init ( void )
 
 	PIT_GetDefaultConfig ( &pitConfig );
 	PIT_Init ( PIT, &pitConfig );
-//	PIT_SetTimerPeriod ( PIT, kPIT_Chnl_0,
-//			USEC_TO_COUNT( 22.6757369F, CLOCK_GetFreq ( kCLOCK_BusClk ) ) );
 
-//Working time period for 4.41 KHz sampling
-//	PIT_SetTimerPeriod ( PIT, kPIT_Chnl_0,
-//			USEC_TO_COUNT( 226.757369F, CLOCK_GetFreq ( kCLOCK_BusClk ) ) );
+	PIT_SetTimerPeriod ( PIT, kPIT_Chnl_1,
+			USEC_TO_COUNT( 10000000.0F, CLOCK_GetFreq ( kCLOCK_BusClk ) ) );
 
-//Working time period for 8.82 KHz sampling
-	PIT_SetTimerPeriod ( PIT, kPIT_Chnl_0,
-			USEC_TO_COUNT( 113.378684F, CLOCK_GetFreq ( kCLOCK_BusClk ) ) );
-
-//Working time period for 17.64 KHz sampling
+	//Working time period for 8.82 KHz sampling
 //	PIT_SetTimerPeriod ( PIT, kPIT_Chnl_0,
-//			USEC_TO_COUNT( 56.689342F, CLOCK_GetFreq ( kCLOCK_BusClk ) ) );
+//			USEC_TO_COUNT( 113.378684F, CLOCK_GetFreq ( kCLOCK_BusClk ) ) );
+
+	//Working time period for 17.64 KHz sampling
+		PIT_SetTimerPeriod ( PIT, kPIT_Chnl_0,
+				USEC_TO_COUNT( 45.3514F, CLOCK_GetFreq ( kCLOCK_BusClk ) ) );
+
 
 	PIT_EnableInterrupts ( PIT, kPIT_Chnl_0, kPIT_TimerInterruptEnable );
+	PIT_EnableInterrupts ( PIT, kPIT_Chnl_1, kPIT_TimerInterruptEnable );
 	EnableIRQ ( PIT0_IRQn );
+	EnableIRQ ( PIT1_IRQn );
 	DAC_GetDefaultConfig ( &dacConfigStruct );
 	DAC_Init ( DAC0, &dacConfigStruct );
 	DAC_Enable ( DAC0, pdTRUE );

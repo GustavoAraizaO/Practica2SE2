@@ -32,6 +32,8 @@
 
 #ifndef LWIP_TCPECHO_H
 #define LWIP_TCPECHO_H
+#include <stdint.h>
+#include "DAC_tasks.h"
 
 typedef enum {
 	ESC = '0',
@@ -44,7 +46,7 @@ void tcpecho_init(void);
 
 void tcp_playStop(void);
 
-void tcp_Selection(void);
+uint16_t tcp_portSelection(void);
 
 void tcp_Statistics(void);
 

@@ -31,6 +31,7 @@
  */
 
 #include "udpecho.h"
+#include "tcpecho.h"
 
 #include "lwip/opt.h"
 
@@ -43,13 +44,14 @@
 
 uint8_t bufferA [ 4096 ];
 uint8_t bufferB [ 4096 ];
+uint8_t pkg_cnt = 0;
 
 uint8_t bufferA_copy_done_flag = pdFALSE;
 uint8_t bufferB_copy_done_flag = pdFALSE;
 uint8_t bufferA_done_flag = pdFALSE;
 uint8_t bufferB_done_flag = pdTRUE;
-
 uint8_t buffer_first_flag = pdTRUE;
+extern uint8_t g_FlagPort;
 
 uint8_t * get_BufferA ( void )
 {
@@ -63,28 +65,48 @@ uint8_t * get_BufferB ( void )
 	return bufferB_ptr;
 }
 
+uint8_t get_pkg_count (void)
+{
+	return pkg_cnt;
+}
+
+void clear_pkg_count (void)
+{
+	pkg_cnt = 0;
+}
+
 /*-----------------------------------------------------------------------------------*/
 static void udpecho_thread ( void *arg )
 {
 
 	struct netconn *conn;
 	struct netbuf *buf;
-	uint8_t buffer [ 4096 ];
+	uint8_t buffer [ 512 ];
 	err_t err;
 	u32_t buffercount;
 	LWIP_UNUSED_ARG( arg );
 
 	conn = netconn_new( NETCONN_UDP );
-	netconn_bind ( conn, IP_ADDR_ANY, 50007 );
+	netconn_bind ( conn, IP_ADDR_ANY, 50008 );
 
 	LWIP_ERROR( "udpecho: invalid conn", (conn != NULL), return; );
 
 	while ( 1 )
 	{
+		if (pdTRUE == g_FlagPort)
+		{
+			netbuf_delete ( buf );
+			uint16_t portselect;
+			portselect = tcp_portSelection();
+			netconn_bind ( conn, IP_ADDR_ANY, portselect );
+			LWIP_ERROR( "udpecho: invalid conn", (conn != NULL), return; );
+			g_FlagPort = pdFALSE;
+		}
 		err = netconn_recv ( conn, &buf );
+
 		if (err == ERR_OK)
 		{
-
+			pkg_cnt++;
 			if ( pdTRUE == bufferA_copy_done_flag && pdTRUE == bufferB_done_flag )
 			{
 				bufferB_copy_done_flag = pdFALSE;
@@ -99,6 +121,7 @@ static void udpecho_thread ( void *arg )
 				{
 					buffer_first_flag = pdFALSE;
 					PIT_StartTimer ( PIT, kPIT_Chnl_0 );
+					PIT_StartTimer ( PIT, kPIT_Chnl_1 );
 				}
 				else
 				{
@@ -118,7 +141,7 @@ static void udpecho_thread ( void *arg )
 void udpecho_init ( void )
 {
 	sys_thread_new ( "udpecho_thread", udpecho_thread, NULL,
-	DEFAULT_THREAD_STACKSIZE, DEFAULT_THREAD_PRIO );
+			DEFAULT_THREAD_STACKSIZE, DEFAULT_THREAD_PRIO );
 }
 
 #endif /* LWIP_NETCONN */

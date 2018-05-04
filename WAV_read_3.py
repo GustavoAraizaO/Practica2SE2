@@ -5,9 +5,9 @@ import numpy
 import time
 
 UDP_IP = "192.168.0.102"
-UDP_PORT = 50008
+UDP_PORT = 50010
 
-fs, data = wavfile.read("C:\LOYALTY.wav")
+fs, data = wavfile.read("C:\Reckoner.wav")
 data_to_send = data[:,0]
 data_to_send.setflags(write=1)
 pkg_size = 4096

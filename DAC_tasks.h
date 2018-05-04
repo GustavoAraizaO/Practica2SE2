@@ -16,7 +16,10 @@
 #include "fsl_pit.h"
 #include "common_header.h"
 #include "lwip\contrib\apps\udpecho\udpecho.h"
+#include "lwip\contrib\apps\tcpecho\tcpecho.h"
+#define MIDVAL 2047
 
 void DAC_init ( void );
+uint8_t get_pkg_received (void);
 
 #endif /* DAC_TASKS_H_ */

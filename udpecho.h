@@ -44,6 +44,9 @@
 uint8_t * get_BufferA (void);
 uint8_t * get_BufferB (void);
 
+uint8_t get_pkg_count (void);
+void clear_pkg_count (void);
+
 void udpecho_init(void);
 
 #endif /* LWIP_UDPECHO_H */

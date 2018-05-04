@@ -5,9 +5,9 @@ import numpy
 import time
 
 UDP_IP = "192.168.0.102"
-UDP_PORT = 50008
+UDP_PORT = 50009
 
-fs, data = wavfile.read("C:\LOYALTY.wav")
+fs, data = wavfile.read("C:\Look_what_you_made_me_do.wav")
 data_to_send = data[:,0]
 data_to_send.setflags(write=1)
 pkg_size = 4096
@@ -42,3 +42,4 @@ while True:
     n = n + pkg_size
     toc = time.clock()
     time.sleep(0.092879 - (tic - toc))
+    #time.sleep(0.009029 - (tic - toc))
